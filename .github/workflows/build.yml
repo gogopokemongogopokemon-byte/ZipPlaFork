@@ -12,10 +12,14 @@ jobs:
       - uses: microsoft/setup-msbuild@v2
 
       - name: Build
-        run: msbuild source/ZipPla.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild source/ZipPla.sln /p:Configuration=Release
+
+      - name: List output
+        run: Get-ChildItem -Path source/ZipPla/bin -Recurse | Select-Object FullName
+        shell: pwsh
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: ZipPla-fixed
-          path: source/ZipPla/bin/Release/
+          path: source/ZipPla/bin/
