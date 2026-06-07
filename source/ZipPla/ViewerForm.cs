@@ -14193,6 +14193,7 @@ namespace ZipPla
                     }
                     else
                     {
+                        tmSlideshow_LoadWaiting = false;
                         slideshowStart();
                         tmSlideshow_Tick(sender, e);
                     }
