@@ -11089,11 +11089,11 @@ namespace ZipPla
                         for (var i = 0; i < thumbStop; i++) Order[i + idx] = Order[i] ^ 1;
                         idx += thumbStop;
                     }
-
+                    
                     if (refThumbnail && stp > stt)
                     {
                         var preloadLen   = (int)(stp - stt);
-                        var preloadBack  = Math.Min((int)len, (int)stp + preloadLen);
+                        var preloadBack  = Math.Min(s2d.Length, (int)stp + preloadLen);
                         var preloadFront = Math.Max(0,        (int)stt - preloadLen);
                         for (var i = (int)stp; i < preloadBack; i++)
                         {
