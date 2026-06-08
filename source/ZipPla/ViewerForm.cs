@@ -14216,6 +14216,10 @@ namespace ZipPla
                     */
                 };
                 bmwLoadEachPage.EachRunWorkerCompleted += eh;
+                 if (bmwLoadEachPage.ThreadCount == 0)
+                {
+                    bmwLoadEachPage.ThreadCount = 1;
+                }
             }
         }
 
