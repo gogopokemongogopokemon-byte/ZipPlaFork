@@ -11237,14 +11237,14 @@ namespace ZipPla
                     var di = s2d[i];
                     if (di < 0 || di >= initialZipPathLength) continue;
                     var item = tvCatalog[di];
-                    if (item?.Image != null) { item.Image = null; bmwMakePreview.ReworkOrder(2 * di + 1); }
+                    if (item?.Image != null) { try { bmwMakePreview.ReworkOrder(2 * di + 1); item.Image = null; } catch { } }
                 }
                 for (var i = keepMax; i < s2d.Length; i++)
                 {
                     var di = s2d[i];
                     if (di < 0 || di >= initialZipPathLength) continue;
                     var item = tvCatalog[di];
-                    if (item?.Image != null) { item.Image = null; bmwMakePreview.ReworkOrder(2 * di + 1); }
+                     if (item?.Image != null) { try { bmwMakePreview.ReworkOrder(2 * di + 1); item.Image = null; } catch { } }
                 }
             }
             SetBackgroundMode(true, 0);
