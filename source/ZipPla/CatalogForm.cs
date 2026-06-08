@@ -11090,6 +11090,31 @@ namespace ZipPla
                         idx += thumbStop;
                     }
 
+                    if (refThumbnail && stp > stt)
+                    {
+                        var preloadLen   = (int)(stp - stt);
+                        var preloadBack  = Math.Min((int)len, (int)stp + preloadLen);
+                        var preloadFront = Math.Max(0,        (int)stt - preloadLen);
+                        for (var i = (int)stp; i < preloadBack; i++)
+                        {
+                            var di = s2d[i];
+                            if (di < initialZipPathLength && !alreadyAdded[di])
+                            {
+                                alreadyAdded[di] = true;
+                                Order[idx++] = 2 * di | 1;
+                            }
+                        }
+                        for (var i = (int)stt - 1; i >= preloadFront; i--)
+                        {
+                            var di = s2d[i];
+                            if (di < initialZipPathLength && !alreadyAdded[di])
+                            {
+                                alreadyAdded[di] = true;
+                                Order[idx++] = 2 * di | 1;
+                            }
+                        }
+                    }
+
                     SetBackgroundMode_ShownRange = idx;
 
                     long len = tvCatalog.ShowIndexToDataIndex.Length;
@@ -11199,6 +11224,29 @@ namespace ZipPla
 
         private void tvCatalog_DisplayedChanged(object sender, EventArgs e)
         {
+            var s2d = tvCatalog.ShowIndexToDataIndex;
+            if (s2d != null && bmwMakePreview.IsBusy)
+            {
+                var visStart = (int)tvCatalog.DisplayedStartShowIndex;
+                var visStop  = (int)tvCatalog.DisplayedStopShowIndex;
+                var margin   = Math.Max(visStop - visStart, 5);
+                var keepMin  = Math.Max(0,          visStart - margin * 2);
+                var keepMax  = Math.Min(s2d.Length, visStop  + margin * 2);
+                for (var i = 0; i < keepMin; i++)
+                {
+                    var di = s2d[i];
+                    if (di < 0 || di >= initialZipPathLength) continue;
+                    var item = tvCatalog[di];
+                    if (item?.Image != null) { item.Image = null; bmwMakePreview.ReworkOrder(2 * di + 1); }
+                }
+                for (var i = keepMax; i < s2d.Length; i++)
+                {
+                    var di = s2d[i];
+                    if (di < 0 || di >= initialZipPathLength) continue;
+                    var item = tvCatalog[di];
+                    if (item?.Image != null) { item.Image = null; bmwMakePreview.ReworkOrder(2 * di + 1); }
+                }
+            }
             SetBackgroundMode(true, 0);
         }
 
