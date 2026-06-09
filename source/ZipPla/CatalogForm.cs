@@ -11093,8 +11093,8 @@ namespace ZipPla
                     if (refThumbnail && stp > stt)
                     {
                         var preloadLen   = (int)(stp - stt);
-                        var preloadBack  = Math.Min(s2d.Length, (int)stp + preloadLen);
-                        var preloadFront = Math.Max(0,        (int)stt - preloadLen);
+                        var preloadBack  = Math.Min(s2d.Length, (int)stp + preloadLen * 3);
+                        var preloadFront = Math.Max(0,        (int)stt - preloadLen * 3); 
                         for (var i = (int)stp; i < preloadBack; i++)
                         {
                             var di = s2d[i];
@@ -11230,8 +11230,8 @@ namespace ZipPla
                 var visStart = (int)tvCatalog.DisplayedStartShowIndex;
                 var visStop  = (int)tvCatalog.DisplayedStopShowIndex;
                 var margin   = Math.Max(visStop - visStart, 5);
-                var keepMin  = Math.Max(0,          visStart - margin * 2);
-                var keepMax  = Math.Min(s2d.Length, visStop  + margin * 2);
+                var keepMin  = Math.Max(0,          visStart - margin * 4);
+                var keepMax  = Math.Min(s2d.Length, visStop  + margin * 4);
                 for (var i = 0; i < keepMin; i++)
                 {
                     var di = s2d[i];
