@@ -24776,6 +24776,10 @@ namespace ZipPla
                 if (!string.IsNullOrEmpty(name)) // && cond != LoadResult.NotYet) ファイル名と統一
                 {
                     var cond = lra[e.DataIndex];
+                    // Fix: ThumbViewerItem.LoadAsync does not update LoadResultArray,
+                    // so items loaded via LoadAsync remain NotYet even with a valid image.
+                    if (cond == LoadResult.NotYet && sender[e.DataIndex]?.Image != null)
+                        cond = LoadResult.Success;
                     var lastWriteTime = mta[e.DataIndex];
 
                     var path = zpa[e.DataIndex];
