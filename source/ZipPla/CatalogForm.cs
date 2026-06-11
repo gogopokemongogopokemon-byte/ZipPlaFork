@@ -11093,8 +11093,8 @@ namespace ZipPla
                     if (refThumbnail && stp > stt)
                     {
                         var preloadLen   = (int)(stp - stt);
-                        var preloadBack  = Math.Min(s2d.Length, (int)stp + preloadLen * 3);
-                        var preloadFront = Math.Max(0,        (int)stt - preloadLen * 3); 
+                        var preloadBack  = Math.Min(s2d.Length, (int)stp + preloadLen);
+                        var preloadFront = Math.Max(0,        (int)stt - preloadLen);
                         for (var i = (int)stp; i < preloadBack; i++)
                         {
                             var di = s2d[i];
@@ -11230,8 +11230,8 @@ namespace ZipPla
                 var visStart = (int)tvCatalog.DisplayedStartShowIndex;
                 var visStop  = (int)tvCatalog.DisplayedStopShowIndex;
                 var margin   = Math.Max(visStop - visStart, 5);
-                var keepMin  = Math.Max(0,          visStart - margin * 4);
-                var keepMax  = Math.Min(s2d.Length, visStop  + margin * 4);
+                var keepMin = Math.Max(0,          visStart - margin * 2);
+                var keepMax = Math.Min(s2d.Length, visStop  + margin * 2);
                 for (var i = 0; i < keepMin; i++)
                 {
                     var di = s2d[i];
@@ -30282,7 +30282,7 @@ namespace ZipPla
 
     public class ThumbViewerItem : IDisposable
     {
-        static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        static readonly SemaphoreSlim semaphore = new SemaphoreSlim(4, 4);
         public CatalogForm OwnerCatalog { get; set; }
         private ThumbViewer owner = null;
         public ThumbViewer Owner { get { return owner; } }
@@ -30333,21 +30333,31 @@ namespace ZipPla
         {
             var path = FilePath;
             if (path == null || OwnerCatalog == null || source != null || Image != null) 
-                return;
+                 return;
             source = new CancellationTokenSource();
+            var token = source.Token;
             MovieInfo info = null;
-            await semaphore.WaitAsync();
+             try
+            {
+                 await semaphore.WaitAsync(token);
+            }
+            catch (OperationCanceledException)
+            {
+                 source.Dispose();
+                 source = null;
+                 return;
+             }
             try
             {
-                if (source.IsCancellationRequested)
-                    return;
-                Image = await Task.Run(() => OwnerCatalog.GetThumbnail(path, Directory.Exists(path), null, out _, out _, out _, out _, out _, ref info, false));
-                if (FilePath != path)
-                    Image = null;
+                if (token.IsCancellationRequested)
+                     return;
+                 Image = await Task.Run(() => OwnerCatalog.GetThumbnail(path, Directory.Exists(path), null, out _, out _, out _, out _, out _, ref info, false));
+                 if (FilePath != path)
+                      Image = null;
             }
             finally
             {
-                source.Dispose();
+                source?.Dispose();
                 source = null;
                 semaphore.Release();
             }
