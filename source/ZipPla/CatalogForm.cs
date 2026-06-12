@@ -32563,8 +32563,8 @@ namespace ZipPla
             }
 
             //表示中のアイテム+前後1列のアイテムのBitmapを読み込み、それ以外を破棄する
-            var clearBefore = -AutoScrollPosition.Y / gridSizeV - 1;
-            var clearAfter = (-AutoScrollPosition.Y + Height) / gridSizeV + 2;
+            var clearBefore = -AutoScrollPosition.Y / gridSizeV - 2;
+            var clearAfter = (-AutoScrollPosition.Y + Height) / gridSizeV + 4;
             for(int i=0;i<clearBefore*cols;i++)
             {
                 var dataIndex = ShowIndexToDataIndex[i];
